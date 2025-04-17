@@ -18,18 +18,18 @@ export class CommentMaster extends Model {
   // Self-reference for nested comments (parent-child)
   @ForeignKey(() => CommentMaster)
   @Column({ type: DataType.INTEGER, allowNull: true })
-  parentId: number;
+  ParentId: number;
 
-  @BelongsTo(() => CommentMaster, 'parentId')
+  @BelongsTo(() => CommentMaster, 'ParentId')
   parent: CommentMaster;
 
-  @HasMany(() => CommentMaster, 'parentId')
+  @HasMany(() => CommentMaster, 'ParentId')
   replies: CommentMaster[];
 
   // Relationship to card
   @ForeignKey(() => CardMaster)
   @Column({ type: DataType.INTEGER, allowNull: false })
-  cardId: number;
+  CardMasterId: number;
 
   @BelongsTo(() => CardMaster)
   card: CardMaster;
@@ -37,7 +37,7 @@ export class CommentMaster extends Model {
   // Relationship to user
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER, allowNull: false })
-  userId: number;
+  UserMasterId: number;
 
   @BelongsTo(() => User)
   user: User;

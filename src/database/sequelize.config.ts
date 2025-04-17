@@ -10,5 +10,5 @@ export const sequelizeConfig: SequelizeModuleOptions = {
   models: [], // we'll populate this later
   autoLoadModels: true,
   synchronize: true,
-  sync: { alter: true },
+  // sync: { alter: true },
 };
