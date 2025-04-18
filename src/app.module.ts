@@ -13,6 +13,7 @@ import { BoardMaster } from './board/board.model';
 import { ListMaster } from './list/list.model';
 import { CardMaster } from './card/card.model';
 import { CommentMaster } from './comment/comment.model';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ import { CommentMaster } from './comment/comment.model';
     CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}
