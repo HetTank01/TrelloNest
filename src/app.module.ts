@@ -22,14 +22,6 @@ import { MailService } from './mail/mail.service';
       models: [User, BoardMaster, ListMaster, CardMaster, CommentMaster],
     }),
 
-    SequelizeModule.forFeature([
-      User,
-      BoardMaster,
-      ListMaster,
-      CardMaster,
-      CommentMaster,
-    ]),
-
     UserModule,
     BoardModule,
     ListModule,
