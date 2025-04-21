@@ -3,12 +3,16 @@ import { CommentMaster } from './comment.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/user/user.model';
 import { CommentDto } from './dto/comment.dto';
+import { CardMaster } from 'src/card/card.model';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectModel(CommentMaster)
     private commentModel: typeof CommentMaster,
+
+    @InjectModel(CardMaster)
+    private cardModel: typeof CardMaster,
   ) {}
 
   async getAll(cardId: number): Promise<CommentMaster[]> {
@@ -29,7 +33,7 @@ export class CommentService {
   }
 
   async create(commentData: CommentDto): Promise<CommentMaster> {
-    const comment = await this.commentModel.create({ commentData });
+    const comment = await this.commentModel.create({ ...commentData });
     return comment;
   }
 
@@ -38,7 +42,7 @@ export class CommentService {
     cardId: number,
     bodyData: any,
   ): Promise<void> {
-    const isCardExist = await this.commentModel.findByPk(cardId);
+    const isCardExist = await this.cardModel.findByPk(cardId);
 
     if (!isCardExist) {
       throw new Error('Card not found');
@@ -50,6 +54,48 @@ export class CommentService {
       throw new Error('Comment not found');
     }
 
-    await comment.update({ bodyData });
+    await comment.update({ ...bodyData });
+  }
+
+  async delete(commentId: number, CardMasterId: number): Promise<void> {
+    const isCardExist = await this.cardModel.findByPk(CardMasterId);
+
+    if (!isCardExist) {
+      throw new Error('Card not found');
+    }
+
+    const isCommentExist = await this.commentModel.findByPk(commentId);
+
+    if (!isCommentExist) {
+      throw new Error('Comment not found');
+    }
+
+    const comments = await this.commentModel.findAll({
+      where: { ParentId: isCommentExist.id },
+    });
+
+    await Promise.all(comments.map((comment) => comment.destroy()));
+    await isCommentExist.destroy();
+  }
+
+  async createReply(
+    description: string,
+    UserMasterId: number,
+    ParentId: number,
+  ): Promise<CommentMaster> {
+    const isParentCommentExist = await this.commentModel.findByPk(ParentId);
+
+    if (!isParentCommentExist) {
+      throw new Error('Parent comment not found');
+    }
+
+    const reply = await this.commentModel.create({
+      description,
+      UserMasterId,
+      ParentId,
+      CardMasterId: isParentCommentExist.CardMasterId,
+    });
+
+    return reply;
   }
 }
